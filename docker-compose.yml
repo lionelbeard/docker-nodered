@@ -1,0 +1,27 @@
+version: "2"
+services:
+  nodered:
+     image: nodered/node-red-docker:rpi-zwave
+     build: .
+     restart: unless-stopped
+     hostname: nodered
+     volumes:
+         - "/etc/localtime:/etc/localtime:ro"
+         - "/etc/timezone:/etc/timezone:ro"
+         - /node-red-data:/data
+     ports:
+         - 1880:1880
+     depends_on:
+         - influxdb
+  influxdb:
+     image: influxdb:latest
+     restart: unless-stopped
+     hostname: influxdb
+     volumes:
+         - "/etc/localtime:/etc/localtime:ro"
+         - "/etc/timezone:/etc/timezone:ro"
+         - /influxdb-data:/var/lib/influxdb
+     environment:
+         - INFLUXDB_DB=nodered
+         - INFLUXDB_USER=nodered
+         - INFLUXDB_USER_PASSWORD=n0der3d_db
